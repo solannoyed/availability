@@ -32,22 +32,36 @@
 
 	type Availability = {
 		interval: Interval;
-		availability: number; // 0 (unavailable) / 1 (invonvenient) / 2 (preferred) / 3 (ideal)
+		availability: 0 | 1 | 2 | 3; // 0 (unavailable) / 1 (invonvenient) / 2 (available) / 3 (preferred)
 	};
 	const events: Availability[] = [
 		{
 			interval: {
-				start: new Date(Date.UTC(2024, 0, 27, 1, 15)),
-				end: new Date(Date.UTC(2024, 0, 28, 9, 30))
+				start: new Date(Date.UTC(2024, 0, 1, 1, 15)),
+				end: new Date(Date.UTC(2024, 0, 1, 9, 30))
+			},
+			availability: 0
+		},
+		{
+			interval: {
+				start: new Date(Date.UTC(2024, 0, 2, 0, 45)),
+				end: new Date(Date.UTC(2024, 0, 2, 1, 45))
 			},
 			availability: 1
 		},
 		{
 			interval: {
-				start: new Date(Date.UTC(2024, 0, 18, 0, 45)),
-				end: new Date(Date.UTC(2024, 0, 19, 1, 45))
+				start: new Date(Date.UTC(2024, 0, 3, 0, 45)),
+				end: new Date(Date.UTC(2024, 0, 3, 1, 45))
 			},
 			availability: 2
+		},
+		{
+			interval: {
+				start: new Date(Date.UTC(2024, 0, 4, 0, 45)),
+				end: new Date(Date.UTC(2024, 0, 4, 1, 45))
+			},
+			availability: 3
 		}
 	];
 
@@ -71,16 +85,34 @@
 		event.interval.end = week.end as Date;
 	}
 
-	function getAvailability(day: number, hour: number, minute: number): string {
+	type CellColour =
+		| 'td-unavailable'
+		| 'td-inconvenient'
+		| 'td-available'
+		| 'td-available'
+		| 'td-preferred'
+		| 'td-past'
+		| '';
+	function getAvailability(day: number, hour: number, minute: number): CellColour {
 		const date = addMinutes(addHours(addDays(week.start as Date, day), hour), minute);
 		const interval: Interval = {
 			start: date,
 			end: addMinutes(date, duration)
 		};
 		for (const event of events) {
-			if (areIntervalsOverlapping(interval, event.interval)) return `${event.availability}`;
+			if (!areIntervalsOverlapping(interval, event.interval)) continue;
+			switch (event.availability) {
+				case 0:
+					return 'td-unavailable';
+				case 1:
+					return 'td-inconvenient';
+				case 2:
+					return 'td-available';
+				case 3:
+					return 'td-preferred';
+			}
 		}
-		return '';
+		return date < now ? 'td-past' : '';
 	}
 </script>
 
@@ -90,7 +122,7 @@
 	{/each}
 </select> -->
 
-<table>
+<table class="table table-xs">
 	<thead>
 		<th></th>
 		{#each eachDayOfInterval(week) as day}
@@ -102,7 +134,7 @@
 			<tr>
 				<th>{timeFormatter.format(time)}</th>
 				{#each eachDayOfInterval(week) as day}
-					<td>{getAvailability(day.getDay(), time.getHours(), time.getMinutes())}</td>
+					<td class={getAvailability(day.getDay(), time.getHours(), time.getMinutes())}></td>
 				{/each}
 			</tr>
 		{/each}
