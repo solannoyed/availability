@@ -1,0 +1,54 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [$default-branch]
+  # Allow running manually
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one at a time
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  # Single deploy job because that's all we're doing
+  deploy:
+    envitonment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # https://github.com/pnpm/action-setup
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          run-install: true
+
+      - name: Build
+        run: pnpm run build
+
+      # https://github.com/actions/configure-pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      # https://github.com/actions/upload-pages-artifact
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        # with:
+        #   path: './build'
+
+      # https://github.com/actions/deploy-pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
