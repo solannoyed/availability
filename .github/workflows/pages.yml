@@ -52,8 +52,8 @@ jobs:
       # https://github.com/actions/upload-pages-artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
-        # with:
-        #   path: './build'
+        with:
+          path: './build'
 
       # https://github.com/actions/deploy-pages
       - name: Deploy to GitHub Pages
