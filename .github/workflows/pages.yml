@@ -19,7 +19,7 @@ concurrency:
 jobs:
   # Single deploy job because that's all we're doing
   deploy:
-    envitonment:
+    environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
