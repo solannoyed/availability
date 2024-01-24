@@ -30,42 +30,8 @@
 		end: endOfDay(week.start)
 	};
 
-	type Availability = {
-		interval: Interval;
-		availability: 0 | 1 | 2 | 3; // 0 (unavailable) / 1 (invonvenient) / 2 (available) / 3 (preferred)
-	};
-	const events: Availability[] = [
-		{
-			interval: {
-				start: new Date(Date.UTC(2024, 0, 1, 1, 15)),
-				end: new Date(Date.UTC(2024, 0, 1, 9, 30))
-			},
-			availability: 0
-		},
-		{
-			interval: {
-				start: new Date(Date.UTC(2024, 0, 2, 0, 45)),
-				end: new Date(Date.UTC(2024, 0, 2, 1, 45))
-			},
-			availability: 1
-		},
-		{
-			interval: {
-				start: new Date(Date.UTC(2024, 0, 3, 0, 45)),
-				end: new Date(Date.UTC(2024, 0, 3, 1, 45))
-			},
-			availability: 2
-		},
-		{
-			interval: {
-				start: new Date(Date.UTC(2024, 0, 4, 0, 45)),
-				end: new Date(Date.UTC(2024, 0, 4, 1, 45))
-			},
-			availability: 3
-		}
-	];
-
-	for (const event of events) {
+	export let data;
+	for (const event of data.availability.events) {
 		event.interval.start = addWeeks(
 			event.interval.start,
 			differenceInCalendarWeeks(now, event.interval.start)
@@ -75,10 +41,10 @@
 			differenceInCalendarWeeks(now, event.interval.end)
 		);
 		if (getDay(event.interval.start) <= getDay(event.interval.end)) continue;
-		events.push({
+		data.availability.events.push({
 			interval: {
-				start: week.start,
-				end: event.interval.end
+				start: week.start as Date,
+				end: event.interval.end as Date
 			},
 			availability: event.availability
 		});
@@ -99,7 +65,7 @@
 			start: date,
 			end: addMinutes(date, duration)
 		};
-		for (const event of events) {
+		for (const event of data.availability.events) {
 			if (!areIntervalsOverlapping(interval, event.interval)) continue;
 			switch (event.availability) {
 				case 0:
@@ -110,6 +76,8 @@
 					return 'td-available';
 				case 3:
 					return 'td-preferred';
+				default:
+					break;
 			}
 		}
 		return date < now ? 'td-past' : '';
@@ -121,6 +89,19 @@
 		<option>{duration}</option>
 	{/each}
 </select> -->
+
+<!-- {#if data.availability.title}
+	<h2>{data.availability.title}</h2>
+{/if}
+{#if data.availability.description}
+	<p>{data.availability.description}</p>
+{/if}
+{#if data.availability.created}
+	<p>{data.availability.created}</p>
+{/if}
+{#if data.availability.modified}
+	<p>{data.availability.modified}</p>
+{/if} -->
 
 <table class="table table-xs">
 	<thead>
