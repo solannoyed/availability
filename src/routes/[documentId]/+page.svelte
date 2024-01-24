@@ -57,8 +57,7 @@
 		| 'td-available'
 		| 'td-available'
 		| 'td-preferred'
-		| 'td-past'
-		| '';
+		| 'td-neutral';
 	function getAvailability(day: number, hour: number, minute: number): CellColour {
 		const date = addMinutes(addHours(addDays(week.start as Date, day), hour), minute);
 		const interval: Interval = {
@@ -80,7 +79,16 @@
 					break;
 			}
 		}
-		return date < now ? 'td-past' : '';
+		return 'td-neutral';
+	}
+
+	function isPast(day: number, hour: number, minute: number) {
+		if (day < now.getDay()) return true;
+		if (day > now.getDay()) return false;
+		if (hour < now.getHours()) return true;
+		if (hour > now.getHours()) return false;
+		if (minute < now.getMinutes()) return true;
+		return false;
 	}
 </script>
 
@@ -115,7 +123,10 @@
 			<tr>
 				<th>{timeFormatter.format(time)}</th>
 				{#each eachDayOfInterval(week) as day}
-					<td class={getAvailability(day.getDay(), time.getHours(), time.getMinutes())}></td>
+					<td
+						class={getAvailability(day.getDay(), time.getHours(), time.getMinutes())}
+						class:td-past={isPast(day.getDay(), time.getHours(), time.getMinutes())}
+					></td>
 				{/each}
 			</tr>
 		{/each}

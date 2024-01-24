@@ -11,24 +11,32 @@ module.exports = {
 			{
 				light: {
 					...require('daisyui/src/theming/themes')['light'],
+					'.td-neutral': {
+						'background-color': '#fafafa',
+						opacity: '0'
+					},
 					'.td-unavailable': {
-						'background-color': '#fca5a5'
+						'background-color': '#f87171'
 					},
 					'.td-inconvenient': {
-						'background-color': '#fed7aa'
+						'background-color': '#fecaca'
 					},
 					'.td-available': {
-						'background-color': '#d9f99d'
+						'background-color': '#bbf7d0'
 					},
 					'.td-preferred': {
-						'background-color': '#86efac'
+						'background-color': '#4ade80'
 					},
 					'.td-past': {
-						'background-color': '#fafafa'
-					}
+						opacity: '0.8'
+					},
 				},
 				dark: {
 					...require('daisyui/src/theming/themes')['dark'],
+					'.td-neutral': {
+						'background-color': '#20282f',
+						opacity: '0'
+					},
 					'.td-unavailable': {
 						'background-color': '#7f1d1d'
 					},
@@ -42,7 +50,7 @@ module.exports = {
 						'background-color': '#65a30d'
 					},
 					'.td-past': {
-						'background-color': '#20282f'
+						opacity: '0.8'
 					}
 				}
 			}
